@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957338800443",
+    "project_id": "tp3-firebase-ac93e",
+    "storage_bucket": "tp3-firebase-ac93e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957338800443:android:988d43b5f72c0ded7ce71e",
+        "android_client_info": {
+          "package_name": "org.sarah.tp1_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs02B67cX13xqYuQmonNYCaRCSkTKTZ1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
