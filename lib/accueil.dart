@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,47 +24,40 @@ class Accueil extends StatefulWidget {
 
 class _AccueilState extends State<Accueil> {
 
-  List<HomeItemPhotoResponse> listeTask = [];
+  List listeTask = [];
 
-  // @override
-  // void initState() {
-  //
-  //   // TODO: implement initState
-  //   super.initState();
-  //
-  //   getAllTask();
-  //
-  //
-  // }
-  //
-  //
+  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('tasks');
+
   getAllTask() async {
 
-    Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+    ProgressDialog pd = ProgressDialog(context: context);
+    SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
+    var res = await tasksCollection.get();
+    var tasksDocs = res.docs;
 
-    // ProgressDialog pd = ProgressDialog(context: context);
-    // SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
-    // var resp = await GetAllTasksPhotos();
-    // setState(() {
-    //
-    // });
-    //
-    // pd.close();
-    // if(resp == "connection problem"){
-    //   print("connexion kapout!!!");
-    //   pd.close();
-    //   Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-    //   return;
-    // }
-    // else{
-    //   listeTask = resp;
-    // }
-    // if(listeTask.isEmpty){
-    //   Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-    // }
+    setState(() {
+
+    });
+
+    pd.close();
+
+    listeTask = tasksDocs.toList();
+    if(listeTask.isEmpty){
+      Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+    }
   }
 
+  void initFirebase() async{
+    await Firebase.initializeApp();
+  }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    initFirebase();
+
+    getAllTask();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +130,7 @@ class _AccueilState extends State<Accueil> {
                     leading: SizedBox(
                       height: 50,
                       width: 50,
-                      child: (listeTask[index].photoId ==0)?
+                      child: /*(listeTask[index].photoId ==0)*/ (1==1)? //TODO : MANAGE PICTURES
                       Icon(Icons.image_not_supported) :
                       CachedNetworkImage(
                         imageUrl: "http://10.0.2.2:8080/file/${listeTask[index].photoId}?width=100",
@@ -144,7 +139,7 @@ class _AccueilState extends State<Accueil> {
                       ),
                     ),
                     title: Text(
-                        (listeTask[index].name).toString(), style: MyTypography.myHeadingStyle
+                        (listeTask[index]['name']).toString(), style: MyTypography.myHeadingStyle
                     ),
                     subtitle: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,14 +149,15 @@ class _AccueilState extends State<Accueil> {
                             style: MyTypography.mySmallTextStyle
                         ),
                         Text(
-                            (S.of(context).percTimeSpent(listeTask[index].percentageTimeSpent.toString())), style: MyTypography.mySmallTextStyle
+                            (S.of(context).percTimeSpent(2)), style: MyTypography.mySmallTextStyle //TODO : CALCULATE TIME SPENT
                         ),
                       ],
                     ),
                     trailing: Text(
-                        (S.of(context).percDone(listeTask[index].percentageDone).toString()), style: MyTypography.myLabelStyle
+                        (S.of(context).percDone(listeTask[index]['progress']).toString()), style: MyTypography.myLabelStyle
                     ),
-                    onTap: () => NavigationHelper().navigateTo(context, Details(taskid: listeTask[index].id)),),
+                    // onTap: () => NavigationHelper().navigateTo(context, Details(taskid: listeTask[index].id)),
+                ),
                 );
               },
 

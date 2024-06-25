@@ -43,10 +43,12 @@ class _CreationState extends State<Creation> {
     }
   }
 
-  Future<bool> addTask() async{
+  addTask() async{
     if(checkFields() != "ok"){
       Fluttertoast.showToast(msg: checkFields());
-      return false;
+
+      return;
+
     }
     tasksCollection.add({
       'name' : nomTask.text,
@@ -55,7 +57,6 @@ class _CreationState extends State<Creation> {
       'progress' : 0
     });
 
-    return true;
   }
 
   String checkFields() {
@@ -192,41 +193,10 @@ class _CreationState extends State<Creation> {
                   ElevatedButton(onPressed: () async{
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
 
-                    if(addTask() == true){
-                      pd.close();
-                      NavigationHelper().navigateTo(context, Accueil());
-                    }
-                    // Object? response = await CreateTask(new AddTaskRequest(name: nomTask.text, deadline: selectedDate));
-                    //
-                    // if(response == "Existing"){
-                    //   print("je test!!!");
-                    //   pd.close();
-                    //   Fluttertoast.showToast(msg: S.of(context).tasknameTaken, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                    //   return;
-                    // }
-                    //
-                    // if(response == "Empty"){
-                    //   print("je test!!!");
-                    //   pd.close();
-                    //   Fluttertoast.showToast(msg: S.of(context).tasknameEmpty, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                    //   return;
-                    // }
-                    //
-                    // if(response == "TooShort"){
-                    //   print("je test!!!");
-                    //   pd.close();
-                    //   Fluttertoast.showToast(msg: S.of(context).tasknameTooShort, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                    //   return;
-                    // }
-                    //
-                    // if(response == "connection problem"){
-                    //   print("connexion kapout!!!");
-                    //   pd.close();
-                    //   Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                    //   return;
-                    // }
-                    // pd.close();
+                    addTask();
                     pd.close();
+                    NavigationHelper().navigateTo(context, Accueil());
+
 
                   }, child: Text(
                     S.of(context).create, style: MyTypography.myBodyStyleLight,
