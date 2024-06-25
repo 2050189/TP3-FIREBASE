@@ -8,7 +8,7 @@ import 'package:tp1_flutter/creation.dart';
 import 'package:tp1_flutter/inscription.dart';
 import 'package:tp1_flutter/main.dart';
 
-import 'package:tp1_flutter/testpage.dart';
+
 import 'DTOs/transfer.dart';
 import 'generated/l10n.dart';
 import 'http.dart';
@@ -90,12 +90,6 @@ class _ConnexionState extends State<Connexion> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                buildFields(context, 250, 350)
-                              ],
-                            ),
-                            Row(
                               children: buildButtons(),
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             )
@@ -122,12 +116,6 @@ class _ConnexionState extends State<Connexion> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                buildFields(context, 150, 350),
-                              ],
-                            ),
                             Column(
                               children: buildButtons(),
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -197,7 +185,7 @@ class _ConnexionState extends State<Connexion> {
         pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
         await signInWithGoogle();
         pd.close();
-        NavigationHelper().navigateTo(context, Testpage());
+        NavigationHelper().navigateTo(context, Accueil());
       }, child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

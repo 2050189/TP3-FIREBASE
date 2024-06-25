@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,22 +23,73 @@ class _CreationState extends State<Creation> {
 
   final TextEditingController nomTask = TextEditingController();
 
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = Timestamp.now().toDate().add(Duration(days: 1, hours: 4));
 
   String formattedDate = "";
+
+  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('tasks');
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime.now(), // limite inf de date
+        firstDate: Timestamp.now().toDate().add(Duration(days: 1,hours: 4)), // limite inf de date
         lastDate: DateTime(2101)); // limite sup de date
-    if (picked != null && picked != selectedDate) {
+    if (picked != null && picked != selectedDate.toUtc()) {
       setState(() {
-        selectedDate = picked;
+        selectedDate = picked.add(Duration(hours: 4));
         formattedDate = selectedDate.day.toString() +"/"+ selectedDate.month.toString() +"/"+ selectedDate.year.toString();
       });
     }
+  }
+
+  Future<bool> addTask() async{
+    if(checkFields() != "ok"){
+      Fluttertoast.showToast(msg: checkFields());
+      return false;
+    }
+    tasksCollection.add({
+      'name' : nomTask.text,
+      'creationDate' : DateTime.now(),
+      'deadline' : selectedDate,
+      'progress' : 0
+    });
+
+    return true;
+  }
+
+  String checkFields() {
+
+    if(nomTask.text.isEmpty || nomTask.text.trim() == ""){
+      return S.of(context).tasknameEmpty;
+    }
+
+    if(nomTask.text.length < 2){
+      return S.of(context).tasknameTooShort;
+    }
+
+
+    //TODO : FIND A WAY TO CHECK IF NAME IS ALREADY TAKEN
+    // var query = tasksCollection.where('name', isEqualTo: nomTask.text);
+    //
+    // if(query != null){
+    //   return S.of(context).tasknameTaken;
+    // }
+
+    
+
+    return "ok";
+
+  }
+
+  void initFirebase() async{
+    await Firebase.initializeApp();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    initFirebase();
   }
 
   @override
@@ -138,38 +191,43 @@ class _CreationState extends State<Creation> {
                   }, child: Text(S.of(context).back, style: MyTypography.myBodyStyle,)),
                   ElevatedButton(onPressed: () async{
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
-                    Object? response = await CreateTask(new AddTaskRequest(name: nomTask.text, deadline: selectedDate));
 
-                    if(response == "Existing"){
-                      print("je test!!!");
+                    if(addTask() == true){
                       pd.close();
-                      Fluttertoast.showToast(msg: S.of(context).tasknameTaken, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                      return;
+                      NavigationHelper().navigateTo(context, Accueil());
                     }
-
-                    if(response == "Empty"){
-                      print("je test!!!");
-                      pd.close();
-                      Fluttertoast.showToast(msg: S.of(context).tasknameEmpty, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                      return;
-                    }
-
-                    if(response == "TooShort"){
-                      print("je test!!!");
-                      pd.close();
-                      Fluttertoast.showToast(msg: S.of(context).tasknameTooShort, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                      return;
-                    }
-
-                    if(response == "connection problem"){
-                      print("connexion kapout!!!");
-                      pd.close();
-                      Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-                      return;
-                    }
+                    // Object? response = await CreateTask(new AddTaskRequest(name: nomTask.text, deadline: selectedDate));
+                    //
+                    // if(response == "Existing"){
+                    //   print("je test!!!");
+                    //   pd.close();
+                    //   Fluttertoast.showToast(msg: S.of(context).tasknameTaken, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+                    //   return;
+                    // }
+                    //
+                    // if(response == "Empty"){
+                    //   print("je test!!!");
+                    //   pd.close();
+                    //   Fluttertoast.showToast(msg: S.of(context).tasknameEmpty, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+                    //   return;
+                    // }
+                    //
+                    // if(response == "TooShort"){
+                    //   print("je test!!!");
+                    //   pd.close();
+                    //   Fluttertoast.showToast(msg: S.of(context).tasknameTooShort, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+                    //   return;
+                    // }
+                    //
+                    // if(response == "connection problem"){
+                    //   print("connexion kapout!!!");
+                    //   pd.close();
+                    //   Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+                    //   return;
+                    // }
+                    // pd.close();
                     pd.close();
-                    pd.close();
-                    NavigationHelper().navigateTo(context, Accueil());
+
                   }, child: Text(
                     S.of(context).create, style: MyTypography.myBodyStyleLight,
                   ))

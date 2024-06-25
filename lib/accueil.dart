@@ -24,39 +24,42 @@ class _AccueilState extends State<Accueil> {
 
   List<HomeItemPhotoResponse> listeTask = [];
 
-  @override
-  void initState() {
-
-    // TODO: implement initState
-    super.initState();
-
-    getAllTask();
-
-
-  }
-
-
+  // @override
+  // void initState() {
+  //
+  //   // TODO: implement initState
+  //   super.initState();
+  //
+  //   getAllTask();
+  //
+  //
+  // }
+  //
+  //
   getAllTask() async {
-    ProgressDialog pd = ProgressDialog(context: context);
-    SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
-    var resp = await GetAllTasksPhotos();
-    setState(() {
 
-    });
+    Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
 
-    pd.close();
-    if(resp == "connection problem"){
-      print("connexion kapout!!!");
-      pd.close();
-      Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-      return;
-    }
-    else{
-      listeTask = resp;
-    }
-    if(listeTask.isEmpty){
-      Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-    }
+    // ProgressDialog pd = ProgressDialog(context: context);
+    // SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
+    // var resp = await GetAllTasksPhotos();
+    // setState(() {
+    //
+    // });
+    //
+    // pd.close();
+    // if(resp == "connection problem"){
+    //   print("connexion kapout!!!");
+    //   pd.close();
+    //   Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+    //   return;
+    // }
+    // else{
+    //   listeTask = resp;
+    // }
+    // if(listeTask.isEmpty){
+    //   Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+    // }
   }
 
 
