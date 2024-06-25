@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/creation.dart';
@@ -22,6 +24,39 @@ class _ConnexionState extends State<Connexion> {
   final TextEditingController pseudoConnexion = TextEditingController();
   final TextEditingController mdpConnexion = TextEditingController();
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   FirebaseAuth.instance
+  //       .authStateChanges()
+  //       .listen((User? user) {
+  //     if (user == null) {
+  //       print('User is currently signed out!');
+  //     } else {
+  //       print('User is signed in! ' + user.email!);
+  //     }
+  //   }
+  //   );
+  //
+  // }
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -43,30 +78,33 @@ class _ConnexionState extends State<Connexion> {
 
             return SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
-              child: Column(
-                  children: <Widget>[
-                    buildDecoCard(context),
-                    Expanded( // form
-                      flex: 6,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              buildFields(context, 250, 350)
-                            ],
-                          ),
-                          Row(
-                            children: buildButtons(),
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          )
+              child: Container(
+                height: 800,
+                child: Column(
+                    children: <Widget>[
+                      buildDecoCard(context),
+                      Expanded( // form
+                        flex: 6,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildFields(context, 250, 350)
+                              ],
+                            ),
+                            Row(
+                              children: buildButtons(),
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            )
 
-                        ],
+                          ],
 
+                        ),
                       ),
-                    ),
-                  ]
+                    ]
+                ),
               ),
             );
           }
@@ -152,37 +190,45 @@ class _ConnexionState extends State<Connexion> {
       OutlinedButton(onPressed: () {
         NavigationHelper().navigateTo(context, Inscription());
       }, child: Text(S.of(context).noAccount, style: MyTypography.myBtnTextStyle)),
+
       FilledButton(onPressed: () async {
-
-        ProgressDialog pd = ProgressDialog(context: context);
-
-        pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
-        Object? response = await Login(new SigninRequest(username: pseudoConnexion.text, password: mdpConnexion.text));
-
-        if(response == "InternalAuthenticationServiceException"){
-          print("je test!!!");
-          pd.close();
-          Fluttertoast.showToast(msg: S.of(context).usernameNotFound, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-          return;
-        }
-
-        if(response == "BadCredentialsException"){
-          print("je test!!!");
-          pd.close();
-          Fluttertoast.showToast(msg: S.of(context).psswdInc, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-          return;
-        }
-
-        if(response == "connection problem"){
-          print("connexion kapout!!!");
-          pd.close();
-          Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
-          return;
-        }
-        pd.close();
-
-        NavigationHelper().navigateTo(context, Accueil());
-      }, child: Text(S.of(context).login, style: MyTypography.myBtnTextStyle))
+        await signInWithGoogle();
+      }, child: Row(
+        children: [
+          Icon(Icons.mail_outline), Text("Google sign in" ,style: MyTypography.myBtnTextStyle)
+        ],
+      ))
+      // FilledButton(onPressed: () async {
+      //
+      //   ProgressDialog pd = ProgressDialog(context: context);
+      //
+      //   pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
+      //   Object? response = await Login(new SigninRequest(username: pseudoConnexion.text, password: mdpConnexion.text));
+      //
+      //   if(response == "InternalAuthenticationServiceException"){
+      //     print("je test!!!");
+      //     pd.close();
+      //     Fluttertoast.showToast(msg: S.of(context).usernameNotFound, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+      //     return;
+      //   }
+      //
+      //   if(response == "BadCredentialsException"){
+      //     print("je test!!!");
+      //     pd.close();
+      //     Fluttertoast.showToast(msg: S.of(context).psswdInc, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+      //     return;
+      //   }
+      //
+      //   if(response == "connection problem"){
+      //     print("connexion kapout!!!");
+      //     pd.close();
+      //     Fluttertoast.showToast(msg: S.of(context).noNetwork, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
+      //     return;
+      //   }
+      //   pd.close();
+      //
+      //   NavigationHelper().navigateTo(context, Accueil());
+      // }, child: Text(S.of(context).login, style: MyTypography.myBtnTextStyle))
     ];
   }
 

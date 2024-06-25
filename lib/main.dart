@@ -1,16 +1,22 @@
 
 
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tp1_flutter/connexion.dart';
 import 'package:tp1_flutter/inscription.dart';
 
 import 'DTOs/transfer.dart';
+import 'firebase_options.dart';
 import 'generated/l10n.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 
 class MyColorScheme extends ColorScheme{

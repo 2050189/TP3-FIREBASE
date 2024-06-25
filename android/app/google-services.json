@@ -12,7 +12,12 @@
           "package_name": "org.sarah.tp1_flutter"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "957338800443-1vll769elvae3g6b099shmp05n4ukh92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDs02B67cX13xqYuQmonNYCaRCSkTKTZ1E"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "957338800443-1vll769elvae3g6b099shmp05n4ukh92.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "957338800443-alsntsnkfcear5mdicrusi4sd8nfnb78.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.sarah.tp1Flutter"
+              }
+            }
+          ]
         }
       }
     }

@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '957338800443',
     projectId: 'tp3-firebase-ac93e',
     storageBucket: 'tp3-firebase-ac93e.appspot.com',
+    iosClientId: '957338800443-alsntsnkfcear5mdicrusi4sd8nfnb78.apps.googleusercontent.com',
     iosBundleId: 'org.sarah.tp1Flutter',
   );
 
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '957338800443',
     projectId: 'tp3-firebase-ac93e',
     storageBucket: 'tp3-firebase-ac93e.appspot.com',
+    iosClientId: '957338800443-alsntsnkfcear5mdicrusi4sd8nfnb78.apps.googleusercontent.com',
     iosBundleId: 'org.sarah.tp1Flutter',
   );
 
@@ -85,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'tp3-firebase-ac93e.appspot.com',
     measurementId: 'G-V5CJDQZE51',
   );
+
 }
