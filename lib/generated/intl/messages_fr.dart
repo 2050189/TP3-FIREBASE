@@ -53,7 +53,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "instructionReg":
             MessageLookupByLibrary.simpleMessage("Veuillez vous inscrire."),
         "loading": MessageLookupByLibrary.simpleMessage("Attente..."),
-        "login": MessageLookupByLibrary.simpleMessage("Se connecter!"),
+        "login":
+            MessageLookupByLibrary.simpleMessage("Se connecter avec Google"),
         "logout": MessageLookupByLibrary.simpleMessage("Déconnexion"),
         "nameTask": MessageLookupByLibrary.simpleMessage("Nom de la tâche"),
         "noAccount": MessageLookupByLibrary.simpleMessage("Pas de compte?"),

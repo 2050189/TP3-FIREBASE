@@ -5,7 +5,7 @@
   "existingAccount" : "Existing account?",
   "helloLog" : "Hello!",
   "instructionLog" : "Please log in.",
-  "login" : "Log in!",
+  "login" : "Sign in with Google",
   "noAccount" : "No account?",
   "username": "Username",
   "password" : "Password",

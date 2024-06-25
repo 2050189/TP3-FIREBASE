@@ -8,6 +8,7 @@ import 'package:tp1_flutter/creation.dart';
 import 'package:tp1_flutter/inscription.dart';
 import 'package:tp1_flutter/main.dart';
 
+import 'package:tp1_flutter/testpage.dart';
 import 'DTOs/transfer.dart';
 import 'generated/l10n.dart';
 import 'http.dart';
@@ -187,17 +188,29 @@ class _ConnexionState extends State<Connexion> {
 
   List<Widget> buildButtons() {
     return [
-      OutlinedButton(onPressed: () {
-        NavigationHelper().navigateTo(context, Inscription());
-      }, child: Text(S.of(context).noAccount, style: MyTypography.myBtnTextStyle)),
+      // OutlinedButton(onPressed: () {
+      //   NavigationHelper().navigateTo(context, Inscription());
+      // }, child: Text(S.of(context).noAccount, style: MyTypography.myBtnTextStyle)),
 
       FilledButton(onPressed: () async {
+        ProgressDialog pd = ProgressDialog(context: context);
+        pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
         await signInWithGoogle();
+        pd.close();
+        NavigationHelper().navigateTo(context, Testpage());
       }, child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Icon(Icons.mail_outline), Text("Google sign in" ,style: MyTypography.myBtnTextStyle)
+          Icon(Icons.mail_outline), Text(S.of(context).login,style: MyTypography.myBtnTextStyle)
         ],
-      ))
+      )),
+    //   MaterialButton(onPressed: ()async {
+    // await GoogleSignIn().signOut();
+    // await FirebaseAuth.instance.signOut();
+    // setState(() {});
+    // }, child: Text("sign out"))
+
+
       // FilledButton(onPressed: () async {
       //
       //   ProgressDialog pd = ProgressDialog(context: context);

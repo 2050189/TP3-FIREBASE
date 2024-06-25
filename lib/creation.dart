@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tp1_flutter/DTOs/transfer.dart';
 import 'package:tp1_flutter/accueil.dart';
@@ -56,8 +58,7 @@ class _CreationState extends State<Creation> {
                     color: MyColorScheme.myPrimaryColor,
                   ),
                   child: Text(
-                    "Salut, "+
-                        SingletonDIO.pseudoSingleton+"!",
+                    ((FirebaseAuth.instance.currentUser)?.displayName.toString() == null ? "" : S.of(context).hiUser((FirebaseAuth.instance.currentUser)!.displayName.toString())),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -82,7 +83,9 @@ class _CreationState extends State<Creation> {
                   title: Text(S.of(context).logout),
                   onTap: () async {
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
-                    await Logout();
+                    await GoogleSignIn().signOut();
+                    await FirebaseAuth.instance.signOut();
+                    setState(() {});
                     pd.close();
                     await NavigationHelper().home(context);
                   }

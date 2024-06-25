@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tp1_flutter/DTOs/transfer.dart';
@@ -108,8 +110,7 @@ class _DetailsState extends State<Details> {
                     color: MyColorScheme.myPrimaryColor,
                   ),
                   child: Text(
-                    "Salut, "+
-                        SingletonDIO.pseudoSingleton+"!",
+                    ((FirebaseAuth.instance.currentUser)?.displayName.toString() == null ? "" : S.of(context).hiUser((FirebaseAuth.instance.currentUser)!.displayName.toString())),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -134,7 +135,9 @@ class _DetailsState extends State<Details> {
                   title: Text(S.of(context).logout),
                   onTap: () async {
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
-                    await Logout();
+                    await GoogleSignIn().signOut();
+                    await FirebaseAuth.instance.signOut();
+                    setState(() {});
                     pd.close();
                     await NavigationHelper().home(context);
                   }

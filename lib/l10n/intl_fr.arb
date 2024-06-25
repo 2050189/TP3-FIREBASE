@@ -5,7 +5,7 @@
   "existingAccount" : "Compte existant?",
   "helloLog" : "Bonjour!",
   "instructionLog" : "Veuillez vous connecter.",
-  "login" : "Se connecter!",
+  "login" : "Se connecter avec Google",
   "noAccount" : "Pas de compte?",
   "username": "Pseudo",
   "password" : "Mot de passe",

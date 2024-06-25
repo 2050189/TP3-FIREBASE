@@ -110,10 +110,10 @@ class S {
     );
   }
 
-  /// `Log in!`
+  /// `Sign in with Google`
   String get login {
     return Intl.message(
-      'Log in!',
+      'Sign in with Google',
       name: 'login',
       desc: '',
       args: [],
