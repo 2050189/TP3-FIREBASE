@@ -27,7 +27,7 @@ class _CreationState extends State<Creation> {
 
   String formattedDate = "";
 
-  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('tasks');
+  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('tasks');
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -43,23 +43,28 @@ class _CreationState extends State<Creation> {
     }
   }
 
-  addTask() async{
-    if(checkFields() != "ok"){
-      Fluttertoast.showToast(msg: checkFields());
+  Future<bool> addTask() async{
 
-      return;
+    String checking = await checkFields();
+    if(checking != "ok"){
+      Fluttertoast.showToast(msg: await checkFields());
+
+      return false;
 
     }
     tasksCollection.add({
-      'name' : nomTask.text,
+      'name' : nomTask.text.trim(),
       'creationDate' : DateTime.now(),
       'deadline' : selectedDate,
-      'progress' : 0
+      'progress' : 0,
+      'photoId' : 0
     });
+
+    return true;
 
   }
 
-  String checkFields() {
+  Future<String> checkFields() async {
 
     if(nomTask.text.isEmpty || nomTask.text.trim() == ""){
       return S.of(context).tasknameEmpty;
@@ -76,6 +81,23 @@ class _CreationState extends State<Creation> {
     // if(query != null){
     //   return S.of(context).tasknameTaken;
     // }
+
+
+    var res = await tasksCollection.get();
+    var tasksDocs = res.docs;
+
+    setState(() {
+
+    });
+
+    List list = tasksDocs.toList();
+
+    for(var item in list){
+      String trimmed = item['name'];
+      if(trimmed.trim() == nomTask.text.trim()){
+        return S.of(context).tasknameTaken;
+      }
+    }
 
     
 
@@ -193,9 +215,15 @@ class _CreationState extends State<Creation> {
                   ElevatedButton(onPressed: () async{
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
 
-                    addTask();
+                    bool added = await addTask();
+
                     pd.close();
-                    NavigationHelper().navigateTo(context, Accueil());
+
+                    if(added){
+                      NavigationHelper().navigateTo(context, Accueil());
+                    }
+
+
 
 
                   }, child: Text(

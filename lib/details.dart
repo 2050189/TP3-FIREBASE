@@ -1,9 +1,13 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
@@ -16,9 +20,11 @@ import 'creation.dart';
 import 'generated/l10n.dart';
 
 class Details extends StatefulWidget {
-  const Details({super.key, required this.taskid});
+  const Details({super.key, required this.taskid, required this.timeSpentTask});
 
-  final int taskid;
+  final String taskid;
+  final int timeSpentTask;
+
 
 
   @override
@@ -26,6 +32,8 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
+
+  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('tasks');
 
   final picker = ImagePicker();
   String pathImg = "";
@@ -37,10 +45,12 @@ class _DetailsState extends State<Details> {
   String nameOfTask = "";
   int photoID = 0;
   int _currentSliderValue = 0;
-  double timeLeftPerc = 0;
+  int timeLeftPerc = 0;
   DateTime deadlineTask = DateTime.now();
 
   int initialProg = 0;
+
+  var data;
 
 
 
@@ -60,35 +70,51 @@ class _DetailsState extends State<Details> {
   }
 
 
+  void initFirebase() async{
+    await Firebase.initializeApp();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-    GetTask();
+    initFirebase();
+
+    DocumentReference docRef = tasksCollection.doc(widget.taskid);
+
+    docRef.get().then((DocumentSnapshot snap) async {
+      data = await snap.data() as Map<String, dynamic>;
+    });
+
+    // GetTask(data);
   }
 
-  GetTask()    async{
+
+
+  GetTask(var data) async{
     ProgressDialog pd = ProgressDialog(context: context);
     SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
-    //TaskDetailResponse tdr = await SeeTask(widget.taskid);
-    TaskDetailPhotoResponse tdr = await SeeTaskPhoto(widget.taskid);
     setState(() {
 
     });
-    nameOfTask = tdr.name;
-    initialProg = tdr.percentageDone;
-    _currentSliderValue = tdr.percentageDone;
-    timeLeftPerc = tdr.percentageTimeSpent;
-    deadlineTask = tdr.deadline;
-    if(tdr.photoId != 0){
 
-      photoID = tdr.photoId;
+    nameOfTask = data.get('name');
+    initialProg = data.get('progress');
+    _currentSliderValue = data.get('progress');
+    Timestamp transformedTime = data.get('deadline');
+    deadlineTask = transformedTime.toDate();
+    timeLeftPerc = widget.timeSpentTask;
+
+    if(data.get('photoId') != 0){
+
+      photoID = data.get('photoId');
 
       imgURL = "http://10.0.2.2:8080/file/$photoID?width=150";
 
       imgSelected = Image.network(imgURL);
     }
+
     pd.close();
+
   }
 
   @override
@@ -232,10 +258,15 @@ class _DetailsState extends State<Details> {
                   FilledButton(onPressed: () async{
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
                     if(pathImg != ""){
-                      await sendImg(pathImg, widget.taskid);
+                      // await sendImg(pathImg, widget.taskid);
                     }
                     if(_currentSliderValue != initialProg){
-                      await ChangeProgress(widget.taskid, _currentSliderValue.toInt());
+
+                      // tdr.set({
+                      //   'progress' :  _currentSliderValue.toInt()
+                      // });
+
+                      // await ChangeProgress(widget.taskid, _currentSliderValue.toInt());
                     }
                     pd.close();
                     NavigationHelper().navigateTo(context, Accueil());

@@ -1,7 +1,10 @@
+
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,7 +29,7 @@ class _AccueilState extends State<Accueil> {
 
   List listeTask = [];
 
-  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('tasks');
+  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('tasks');
 
   getAllTask() async {
 
@@ -45,6 +48,39 @@ class _AccueilState extends State<Accueil> {
     if(listeTask.isEmpty){
       Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
     }
+  }
+
+  int calculTimeLeft(Timestamp creationDate, Timestamp deadline) {
+
+    DateTime today = DateTime.now();
+
+    DateTime dateDeadline = deadline.toDate();
+
+    DateTime dateCreation = creationDate.toDate();
+
+    Duration taskDuration = dateDeadline.difference(dateCreation);
+
+    Duration durationLeft = dateDeadline.difference(today);
+
+    int percentage = ((100*durationLeft.inSeconds)/taskDuration.inSeconds).toInt();
+
+    if(percentage < 0){
+      percentage = 0;
+    }
+
+    return percentage;
+
+  }
+
+  String transformTimestamp(Timestamp time){
+
+    DateTime deadlineDate = time.toDate();
+
+    String day = deadlineDate.day.toString();
+    String month = deadlineDate.month.toString();
+    String year = deadlineDate.year.toString();
+
+    return day + "/" + month +"/"+year;
   }
 
   void initFirebase() async{
@@ -145,18 +181,18 @@ class _AccueilState extends State<Accueil> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                            "${listeTask[index].deadline.day}/${listeTask[index].deadline.month}/${listeTask[index].deadline.year}",
+                            transformTimestamp(listeTask[index]['deadline']),
                             style: MyTypography.mySmallTextStyle
                         ),
                         Text(
-                            (S.of(context).percTimeSpent(2)), style: MyTypography.mySmallTextStyle //TODO : CALCULATE TIME SPENT
-                        ),
+                            (S.of(context).percTimeSpent(calculTimeLeft(listeTask[index]['creationDate'], listeTask[index]['deadline']).toString())), style: MyTypography.mySmallTextStyle //TODO : CALCULATE TIME SPENT
+                        )
                       ],
                     ),
                     trailing: Text(
                         (S.of(context).percDone(listeTask[index]['progress']).toString()), style: MyTypography.myLabelStyle
                     ),
-                    // onTap: () => NavigationHelper().navigateTo(context, Details(taskid: listeTask[index].id)),
+                    onTap: () => NavigationHelper().navigateTo(context, Details(taskid: listeTask[index].id, timeSpentTask: calculTimeLeft(listeTask[index]['creationDate'], listeTask[index]['deadline']),)),
                 ),
                 );
               },
