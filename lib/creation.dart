@@ -76,21 +76,22 @@ class _CreationState extends State<Creation> {
     // }
 
 
-    var res = await tasksCollection.get();
-    var tasksDocs = res.docs;
+    // var res = await tasksCollection.get();
+    var res = "";
+    // var tasksDocs = res.docs;
 
     setState(() {
 
     });
 
-    List list = tasksDocs.toList();
+    // List list = tasksDocs.toList();
 
-    for(var item in list){
-      String trimmed = item['name'];
-      if(trimmed.trim() == nomTask.text.trim()){
-        return S.of(context).tasknameTaken;
-      }
-    }
+    // for(var item in list){
+    //   String trimmed = item['name'];
+    //   if(trimmed.trim() == nomTask.text.trim()){
+    //     return S.of(context).tasknameTaken;
+    //   }
+    // }
 
     
 

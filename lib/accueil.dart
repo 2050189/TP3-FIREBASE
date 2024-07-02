@@ -27,7 +27,7 @@ class Accueil extends StatefulWidget {
 
 class _AccueilState extends State<Accueil> {
 
-  late Stream<QuerySnapshot> listeTask;
+  var listeTask;
 
   getAllTask() async {
 
@@ -43,7 +43,7 @@ class _AccueilState extends State<Accueil> {
     pd.close();
 
 
-    if(await listeTask.isEmpty){
+    if(await listeTask == null){
       Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
     }
   }
