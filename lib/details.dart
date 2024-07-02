@@ -12,7 +12,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tp1_flutter/DTOs/transfer.dart';
-import 'package:tp1_flutter/http.dart';
 import 'package:tp1_flutter/main.dart';
 
 import 'accueil.dart';

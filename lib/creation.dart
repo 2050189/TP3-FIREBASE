@@ -10,7 +10,6 @@ import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/main.dart';
 
 import 'generated/l10n.dart';
-import 'http.dart';
 
 class Creation extends StatefulWidget {
   const Creation({super.key});
@@ -27,7 +26,7 @@ class _CreationState extends State<Creation> {
 
   String formattedDate = "";
 
-  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('tasks');
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -52,13 +51,7 @@ class _CreationState extends State<Creation> {
       return false;
 
     }
-    tasksCollection.add({
-      'name' : nomTask.text.trim(),
-      'creationDate' : DateTime.now(),
-      'deadline' : selectedDate,
-      'progress' : 0,
-      'photoId' : 0
-    });
+
 
     return true;
 

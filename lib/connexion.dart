@@ -5,13 +5,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/creation.dart';
-import 'package:tp1_flutter/inscription.dart';
 import 'package:tp1_flutter/main.dart';
 
 
 import 'DTOs/transfer.dart';
+import 'firebase.dart';
 import 'generated/l10n.dart';
-import 'http.dart';
+
 
 class Connexion extends StatefulWidget {
   const Connexion({super.key});
@@ -41,22 +41,7 @@ class _ConnexionState extends State<Connexion> {
   //
   // }
 
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,42 +122,43 @@ class _ConnexionState extends State<Connexion> {
     );
   }
 
-  SizedBox buildFields(BuildContext context, double h, double w) {
-    return SizedBox(
-                            height: h,
-                            width: w,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [ // TODO : RECHECK FIELDS
-                                TextFormField(
-                                  controller: pseudoConnexion,
-                                  decoration: InputDecoration(
-                                    hintStyle: MyTypography.myHintStyle,
-                                    labelStyle: MyTypography.myLabelStyle,
-                                    labelText: S.of(context).username,
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                                TextFormField(
-                                  controller: mdpConnexion,
-                                  decoration: InputDecoration(
-                                    hintStyle: MyTypography.myHintStyle,
-                                    labelStyle: MyTypography.myLabelStyle,
-                                    labelText: S.of(context).password,
-                                    border: OutlineInputBorder(),
 
-                                  ),
-
-                                  obscureText: true,
-                                ),
-
-                              ],
-                            ),
-
-
-                          );
-  }
+  // SizedBox buildFields(BuildContext context, double h, double w) {
+  //   return SizedBox(
+  //                           height: h,
+  //                           width: w,
+  //                           child: Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.stretch,
+  //                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                             children: [
+  //                               TextFormField(
+  //                                 controller: pseudoConnexion,
+  //                                 decoration: InputDecoration(
+  //                                   hintStyle: MyTypography.myHintStyle,
+  //                                   labelStyle: MyTypography.myLabelStyle,
+  //                                   labelText: S.of(context).username,
+  //                                   border: OutlineInputBorder(),
+  //                                 ),
+  //                               ),
+  //                               TextFormField(
+  //                                 controller: mdpConnexion,
+  //                                 decoration: InputDecoration(
+  //                                   hintStyle: MyTypography.myHintStyle,
+  //                                   labelStyle: MyTypography.myLabelStyle,
+  //                                   labelText: S.of(context).password,
+  //                                   border: OutlineInputBorder(),
+  //
+  //                                 ),
+  //
+  //                                 obscureText: true,
+  //                               ),
+  //
+  //                             ],
+  //                           ),
+  //
+  //
+  //                         );
+  // }
 
   List<Widget> buildButtons() {
     return [
