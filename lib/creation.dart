@@ -72,29 +72,23 @@ class _CreationState extends State<Creation> {
 
 
     //TODO : FIND A WAY TO CHECK IF NAME IS ALREADY TAKEN
-    // var query = tasksCollection.where('name', isEqualTo: nomTask.text);
-    //
-    // if(query != null){
-    //   return S.of(context).tasknameTaken;
-    // }
 
 
-    // var res = await tasksCollection.get();
-    // var res = "";
-    // var tasksDocs = res.docs;
+    var res = await getTaskCollection().get();
+    var tasksDocs = res.docs;
 
-    // setState(() {
-    //
-    // });
+    setState(() {
 
-    // List list = tasksDocs.toList();
+    });
 
-    // for(var item in list){
-    //   String trimmed = item['name'];
-    //   if(trimmed.trim() == nomTask.text.trim()){
-    //     return S.of(context).tasknameTaken;
-    //   }
-    // }
+    List list = tasksDocs.toList();
+
+    for(var item in list){
+      String trimmed = item['name'];
+      if(trimmed.trim() == nomTask.text.trim()){
+        return S.of(context).tasknameTaken;
+      }
+    }
 
     
 
