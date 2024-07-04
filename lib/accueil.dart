@@ -34,20 +34,35 @@ class _AccueilState extends State<Accueil> {
   getAllTask() async {
 
     ProgressDialog pd = ProgressDialog(context: context);
-    //SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
-    pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
+    SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
+    //pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
     listeTask = await getAllTasks();
 
-    setState(() {
-
-    });
 
     pd.close();
 
 
-    if(await listeTask.isEmpty){
+    if(listeTask.isEmpty){
       Fluttertoast.showToast(msg: S.of(context).toastFirstTask, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM);
     }
+
+    setState(() {
+
+    });
+  }
+
+  loadImg(String imgURL){
+
+    if(imgURL == ""){
+      return Icon(Icons.image_not_supported);
+    }
+
+
+    return CachedNetworkImage(
+      imageUrl: "${imgURL}?width=50",
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+    );
   }
 
   int calculTimeLeft(DateTime creationDate, DateTime deadline) {
@@ -83,11 +98,15 @@ class _AccueilState extends State<Accueil> {
   }
 
   @override
-  void initState() {
+  initState(){
+    super.initState();
     // TODO: implement initState
+    getAllTask();
     initFirebase();
 
-    getAllTask();
+
+
+
   }
 
   @override
@@ -146,55 +165,50 @@ class _AccueilState extends State<Accueil> {
         )
       ),
       body: RefreshIndicator(
-        child: ListView.builder(
-                  itemCount: listeTask.length,
-                  itemBuilder: (context, index){
+                child: ListView.builder(
+                    itemCount: listeTask.length,
+                    itemBuilder: (context, index){
 
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0), // Add border radius here
-                        color: MyColorScheme.myAccentColorPale,
-                      ),
-                      child: ListTile(
-                        leading: SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: (listeTask[index].photoURL == "")? //TODO : MANAGE PICTURES
-                          Icon(Icons.image_not_supported) :
-                          CachedNetworkImage(
-                            imageUrl: "${listeTask[index].photoURL}?width=50",
-                            placeholder: (context, url) => CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0), // Add border radius here
+                          color: MyColorScheme.myAccentColorPale,
+                        ),
+                        child: ListTile(
+                          leading: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: loadImg(listeTask[index].photoURL)
+
                           ),
+                          title: Text(listeTask[index].name, style : MyTypography.myHeadingStyle),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  transformDatetime(listeTask[index].deadline.toDate()),
+                                  style: MyTypography.mySmallTextStyle
+                              ),
+                              Text(
+                                  (S.of(context).percTimeSpent(calculTimeLeft(listeTask[index].creationDate.toDate(), listeTask[index].deadline.toDate()).toString())), style: MyTypography.mySmallTextStyle //TODO : CALCULATE TIME SPENT
+                              )
+                            ],
+                          ),
+                          trailing: Text(
+                              (S.of(context).percDone(listeTask[index].progress).toString()), style: MyTypography.myLabelStyle
+                          ),
+                          onTap: () => NavigationHelper().navigateTo(context, Details(taskid: listeTask[index].id, timeSpentTask: calculTimeLeft(listeTask[index].creationDate.toDate(), listeTask[index].deadline.toDate()),)),
                         ),
-                        title: Text(listeTask[index].name, style : MyTypography.myHeadingStyle),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                                transformDatetime(listeTask[index].deadline.toDate()),
-                                style: MyTypography.mySmallTextStyle
-                            ),
-                            Text(
-                                (S.of(context).percTimeSpent(calculTimeLeft(listeTask[index].creationDate.toDate(), listeTask[index].deadline.toDate()).toString())), style: MyTypography.mySmallTextStyle //TODO : CALCULATE TIME SPENT
-                            )
-                          ],
-                        ),
-                        trailing: Text(
-                            (S.of(context).percDone(listeTask[index].progress).toString()), style: MyTypography.myLabelStyle
-                        ),
-                        onTap: () => NavigationHelper().navigateTo(context, Details(taskid: listeTask[index].id, timeSpentTask: calculTimeLeft(listeTask[index].creationDate.toDate(), listeTask[index].deadline.toDate()),)),
-                      ),
-                    );
-                  }
+                      );
+                    }
 
                 ),
-        onRefresh: (){
-          return getAllTask();
-        }
+                onRefresh: () async {
+                  return getAllTask();
+                }
 
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           NavigationHelper().navigateTo(context, Creation());

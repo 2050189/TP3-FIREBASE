@@ -102,6 +102,7 @@ class _CreationState extends State<Creation> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     initFirebase();
   }

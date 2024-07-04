@@ -76,6 +76,8 @@ class _DetailsState extends State<Details> {
 
   @override
   void initState() {
+
+    super.initState();
     // TODO: implement initState
     initFirebase();
 
@@ -258,7 +260,7 @@ class _DetailsState extends State<Details> {
                       // await sendImg(pathImg, widget.taskid);
                       //TODO : CHANGE IMG IN FIREBASE
                       
-                      sendImg(File(pathImg), visual!);
+                     await sendImg(File(pathImg), visual!);
                     }
                     if(_currentSliderValue != initialProg){
                       await editTask(widget.taskid, _currentSliderValue.toInt(), visual!);
