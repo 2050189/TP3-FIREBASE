@@ -8,7 +8,6 @@ import 'package:tp1_flutter/creation.dart';
 import 'package:tp1_flutter/main.dart';
 
 
-import 'DTOs/transfer.dart';
 import 'firebase.dart';
 import 'generated/l10n.dart';
 

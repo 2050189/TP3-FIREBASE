@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
-import 'package:tp1_flutter/DTOs/transfer.dart';
 import 'package:tp1_flutter/accueil.dart';
 import 'package:tp1_flutter/main.dart';
 
+import 'firebase.dart';
 import 'generated/l10n.dart';
 
 class Creation extends StatefulWidget {
@@ -22,17 +22,18 @@ class _CreationState extends State<Creation> {
 
   final TextEditingController nomTask = TextEditingController();
 
-  DateTime selectedDate = Timestamp.now().toDate().add(Duration(days: 1, hours: 4));
+  DateTime selectedDate = DateTime.now().add(Duration(hours: 4));
 
   String formattedDate = "";
 
 
 
   Future<void> _selectDate(BuildContext context) async {
+
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: Timestamp.now().toDate().add(Duration(days: 1,hours: 4)), // limite inf de date
+        firstDate: DateTime.now().add(Duration(hours: 4)), // limite inf de date
         lastDate: DateTime(2101)); // limite sup de date
     if (picked != null && picked != selectedDate.toUtc()) {
       setState(() {
@@ -42,7 +43,7 @@ class _CreationState extends State<Creation> {
     }
   }
 
-  Future<bool> addTask() async{
+  Future<bool> creationTask() async{
 
     String checking = await checkFields();
     if(checking != "ok"){
@@ -51,6 +52,8 @@ class _CreationState extends State<Creation> {
       return false;
 
     }
+
+    await addTask(nomTask.text.trim(), Timestamp.fromDate(selectedDate));
 
 
     return true;
@@ -77,12 +80,12 @@ class _CreationState extends State<Creation> {
 
 
     // var res = await tasksCollection.get();
-    var res = "";
+    // var res = "";
     // var tasksDocs = res.docs;
 
-    setState(() {
-
-    });
+    // setState(() {
+    //
+    // });
 
     // List list = tasksDocs.toList();
 
@@ -209,7 +212,7 @@ class _CreationState extends State<Creation> {
                   ElevatedButton(onPressed: () async{
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
 
-                    bool added = await addTask();
+                    bool added = await creationTask();
 
                     pd.close();
 

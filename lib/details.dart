@@ -11,7 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
-import 'package:tp1_flutter/DTOs/transfer.dart';
+import 'package:tp1_flutter/Task/task.dart';
+import 'package:tp1_flutter/firebase.dart';
 import 'package:tp1_flutter/main.dart';
 
 import 'accueil.dart';
@@ -32,7 +33,8 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
 
-  CollectionReference tasksCollection = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).collection('tasks');
+  Task? visual;
+
 
   final picker = ImagePicker();
   String pathImg = "";
@@ -48,8 +50,6 @@ class _DetailsState extends State<Details> {
   DateTime deadlineTask = DateTime.now();
 
   int initialProg = 0;
-
-  var data;
 
 
 
@@ -78,34 +78,31 @@ class _DetailsState extends State<Details> {
     // TODO: implement initState
     initFirebase();
 
-    DocumentReference docRef = tasksCollection.doc(widget.taskid);
 
-    docRef.get().then((DocumentSnapshot snap) async {
-      data = await snap.data() as Map<String, dynamic>;
-    });
-
-    // GetTask(data);
+    GetTask();
   }
 
 
 
-  GetTask(var data) async{
+  GetTask() async{
     ProgressDialog pd = ProgressDialog(context: context);
     SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
+
+    visual = await getOneTask(widget.taskid);
     setState(() {
 
     });
 
-    nameOfTask = data.get('name');
-    initialProg = data.get('progress');
-    _currentSliderValue = data.get('progress');
-    Timestamp transformedTime = data.get('deadline');
+    nameOfTask = visual!.name;
+    initialProg = visual!.progress;
+    _currentSliderValue = visual!.progress;
+    Timestamp transformedTime = visual!.deadline;
     deadlineTask = transformedTime.toDate();
     timeLeftPerc = widget.timeSpentTask;
 
-    if(data.get('photoId') != 0){
+    if(visual!.photoId != 0){
 
-      photoID = data.get('photoId');
+      photoID = visual!.photoId;
 
       imgURL = "http://10.0.2.2:8080/file/$photoID?width=150";
 
@@ -261,9 +258,7 @@ class _DetailsState extends State<Details> {
                     }
                     if(_currentSliderValue != initialProg){
 
-                      // tdr.set({
-                      //   'progress' :  _currentSliderValue.toInt()
-                      // });
+                      await editTask(widget.taskid, _currentSliderValue.toInt(), visual!);
 
                       // await ChangeProgress(widget.taskid, _currentSliderValue.toInt());
                     }
