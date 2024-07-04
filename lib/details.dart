@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -33,7 +34,7 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
 
-  Task? visual;
+  TODOTask? visual;
 
 
   final picker = ImagePicker();
@@ -44,7 +45,7 @@ class _DetailsState extends State<Details> {
   XFile? _imageFile;
 
   String nameOfTask = "";
-  int photoID = 0;
+  String photoUrl = "";
   int _currentSliderValue = 0;
   int timeLeftPerc = 0;
   DateTime deadlineTask = DateTime.now();
@@ -100,11 +101,11 @@ class _DetailsState extends State<Details> {
     deadlineTask = transformedTime.toDate();
     timeLeftPerc = widget.timeSpentTask;
 
-    if(visual!.photoId != 0){
+    if(visual!.photoURL != ""){
 
-      photoID = visual!.photoId;
+      photoUrl = visual!.photoURL;
 
-      imgURL = "http://10.0.2.2:8080/file/$photoID?width=150";
+      imgURL = "${photoUrl}?width=150";
 
       imgSelected = Image.network(imgURL);
     }
@@ -255,12 +256,12 @@ class _DetailsState extends State<Details> {
                     pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
                     if(pathImg != ""){
                       // await sendImg(pathImg, widget.taskid);
+                      //TODO : CHANGE IMG IN FIREBASE
+                      
+                      sendImg(File(pathImg), visual!);
                     }
                     if(_currentSliderValue != initialProg){
-
                       await editTask(widget.taskid, _currentSliderValue.toInt(), visual!);
-
-                      // await ChangeProgress(widget.taskid, _currentSliderValue.toInt());
                     }
                     pd.close();
                     NavigationHelper().navigateTo(context, Accueil());

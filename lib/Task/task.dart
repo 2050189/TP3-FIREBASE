@@ -5,18 +5,18 @@ part './task.g.dart';
 
 
 @JsonSerializable()
-class Task{
+class TODOTask{
   String id;
   String name;
   Timestamp creationDate;
   Timestamp deadline;
   int progress;
-  int photoId;
+  String photoURL;
 
-  Task({required this.id,required this.name, required this.creationDate, required this.deadline, required this.progress, required this.photoId});
+  TODOTask({required this.id,required this.name, required this.creationDate, required this.deadline, required this.progress, required this.photoURL});
 
-  factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+  factory TODOTask.fromJson(Map<String, dynamic> json) => _$TODOTaskFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TaskToJson(this);
+  Map<String, dynamic> toJson() => _$TODOTaskToJson(this);
 
 }

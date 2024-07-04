@@ -27,13 +27,15 @@ class Accueil extends StatefulWidget {
 
 class _AccueilState extends State<Accueil> {
 
-  List<Task> listeTask = [];
+  List<TODOTask> listeTask = [];
+
+
 
   getAllTask() async {
 
     ProgressDialog pd = ProgressDialog(context: context);
-    SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
-
+    //SchedulerBinding.instance.addPostFrameCallback((_) => pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor));
+    pd.show(msg: S.of(context).loading, barrierColor: MyColorScheme.myBarrierColor);
     listeTask = await getAllTasks();
 
     setState(() {
@@ -158,10 +160,10 @@ class _AccueilState extends State<Accueil> {
                         leading: SizedBox(
                           height: 50,
                           width: 50,
-                          child: /*(listeTask[index].photoId ==0)*/ (1==1)? //TODO : MANAGE PICTURES
+                          child: (listeTask[index].photoURL == "")? //TODO : MANAGE PICTURES
                           Icon(Icons.image_not_supported) :
                           CachedNetworkImage(
-                            imageUrl: "http://10.0.2.2:8080/file/${listeTask[index].photoId}?width=100",
+                            imageUrl: "${listeTask[index].photoURL}?width=50",
                             placeholder: (context, url) => CircularProgressIndicator(),
                             errorWidget: (context, url, error) => Icon(Icons.error),
                           ),
